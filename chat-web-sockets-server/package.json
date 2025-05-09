@@ -1,0 +1,27 @@
+{
+  "name": "chat-web-sockets-server",
+  "version": "1.0.0",
+  "description": "The demo chat app Web Sockets server",
+  "keywords": [
+    "demo",
+    "chat",
+    "app",
+    "Web",
+    "Sockets",
+    "server"
+  ],
+  "license": "ISC",
+  "author": "Răzvan Olaru",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "start": "npx tsx index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.1"
+  }
+}
