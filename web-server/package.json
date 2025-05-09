@@ -1,0 +1,26 @@
+{
+  "name": "web-server",
+  "version": "1.0.0",
+  "description": "The demo chat app web server",
+  "keywords": [
+    "demo",
+    "chat",
+    "app",
+    "web",
+    "server"
+  ],
+  "license": "ISC",
+  "author": "Răzvan Olaru",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "start": "npx tsx index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
