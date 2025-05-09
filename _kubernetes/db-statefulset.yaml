@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: chat-app-db
+  namespace: default
+spec:
+  serviceName: "chat-app-db"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-app-db
+  template:
+    metadata:
+      labels:
+        app: chat-app-db
+    spec:
+      containers:
+      - name: chat-app-db
+        image: chat-app-db:latest
+        ports:
+        - containerPort: 5432
+          name: postgres
+        resources:
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: DB_USERNAME
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: DB_PASSWORD
+        - name: POSTGRES_DB
+          value: "chatapp"
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-app-db-service
+  namespace: default
+spec:
+  selector:
+    app: chat-app-db
+  ports:
+  - port: 5432
+    targetPort: 5432
+  clusterIP: None  # Headless service for StatefulSet

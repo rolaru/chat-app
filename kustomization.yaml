@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- _kubernetes/configmap.yaml
+- _kubernetes/secrets.yaml
+- _kubernetes/redis-deployment.yaml
+- _kubernetes/db-statefulset.yaml
+- _kubernetes/web-server-deployment.yaml
+- _kubernetes/web-sockets-server-deployment.yaml
+- _kubernetes/api-gateway-deployment.yaml
+# - nginx-ingress.yaml

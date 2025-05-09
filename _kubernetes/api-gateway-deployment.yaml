@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-api-gateway
+  namespace: default
+  labels:
+    app: nginx-api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-api-gateway
+  template:
+    metadata:
+      labels:
+        app: nginx-api-gateway
+    spec:
+      containers:
+      - name: nginx-api-gateway
+        image: nginx-api-gateway:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-gateway-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-api-gateway-service
+  namespace: default
+spec:
+  selector:
+    app: nginx-api-gateway
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
