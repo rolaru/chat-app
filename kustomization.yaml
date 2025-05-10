@@ -9,4 +9,4 @@ resources:
 - _kubernetes/web-server-deployment.yaml
 - _kubernetes/web-sockets-server-deployment.yaml
 - _kubernetes/api-gateway-deployment.yaml
-# - nginx-ingress.yaml
+# - _kubernetes/nginx-ingress.yaml

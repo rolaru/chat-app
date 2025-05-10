@@ -1,3 +1,6 @@
+# Point the terminal to Minikube's Docker daemon
+eval $(minikube docker-env)
+
 docker build -t chat-app-redis-server:1.0 ./redis/
 docker build -t chat-app-db:1.0 ./db/
 docker build -t chat-app-web-server:1.0 ./web-server/
