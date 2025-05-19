@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
       - name: nginx-api-gateway
-        image: nginx-api-gateway:latest
-        imagePullPolicy: IfNotPresent
+        image: nginx-api-gateway:1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 80
         resources:
@@ -34,7 +34,7 @@ spec:
       volumes:
       - name: nginx-config
         configMap:
-          name: nginx-gateway-config
+          name: chat-app-config
 ---
 apiVersion: v1
 kind: Service

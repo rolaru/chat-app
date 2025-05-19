@@ -1,3 +1,4 @@
 eval $(minikube docker-env)
-docker rm $(docker ps -a -q)
-docker rmi $(docker images -a -q)
+docker stop $(docker ps | grep -E "(chat-app|redis|nginx)" | awk '{print $1}')
+docker rm $(docker ps | grep -E "(chat-app|redis|nginx)" | awk '{print $1}')
+docker rmi $(docker images | grep -E "chat-app|redis|nginx" | awk '{print $3}')

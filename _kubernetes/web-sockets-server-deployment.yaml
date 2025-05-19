@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
       - name: chat-app-web-sockets-server
-        image: chat-app-web-sockets-server:latest
-        imagePullPolicy: IfNotPresent
+        image: chat-app-web-sockets-server:1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 3001
         resources:

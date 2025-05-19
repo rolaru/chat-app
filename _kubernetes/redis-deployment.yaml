@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
       - name: redis
-        image: chat-app-redis-server:latest
-        imagePullPolicy: IfNotPresent
+        image: chat-app-redis-server:1.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 6379
         resources:
