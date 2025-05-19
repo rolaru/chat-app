@@ -4,8 +4,11 @@ metadata:
   name: chat-app-db
   namespace: default
 spec:
-  serviceName: "chat-app-db"
-  replicas: 1
+  serviceName: "chat-app-db-service"
+  replicas: 3
+  minReadySeconds: 10
+  updateStrategy:
+    type: RollingUpdate # Rolling update strategy makes sure that the StatefulSet pod delete/restart is done automatically and gradually
   selector:
     matchLabels:
       app: chat-app-db
@@ -14,9 +17,13 @@ spec:
       labels:
         app: chat-app-db
     spec:
+      securityContext:
+        fsGroup: 70 # Ensure the volume is writable by the postgres user (default UID for offical postgres image is 70)
+        runAsUser: 70
       containers:
       - name: chat-app-db
-        image: chat-app-db:latest
+        image: chat-app-db:1.0
+        imagePullPolicy: Never # use locally built image
         ports:
         - containerPort: 5432
           name: postgres
@@ -27,6 +34,16 @@ spec:
           requests:
             cpu: "500m"
             memory: "512Mi"
+        readinessProbe:
+          exec:
+            command: ["pg_isready", "-U", "$(POSTGRES_USER)"]
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          exec:
+            command: ["pg_isready", "-U", "$(POSTGRES_USER)"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
         env:
         - name: POSTGRES_USER
           valueFrom:
@@ -39,15 +56,23 @@ spec:
               name: chat-app-secrets
               key: DB_PASSWORD
         - name: POSTGRES_DB
-          value: "chatapp"
+          valueFrom:
+            configMapKeyRef:
+              name: chat-app-config
+              key: DB_NAME
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata # Folder where PostgreSQL stores its data
+        - name: POSTGRES_INITDB_ARGS
+          value: "--nosync" # Optional: for faster initialization
         volumeMounts:
         - name: postgres-data
           mountPath: /var/lib/postgresql/data
+          subPath: pgdata
   volumeClaimTemplates:
   - metadata:
       name: postgres-data
     spec:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: [ "ReadWriteOncePod" ]
       storageClassName: "standard"
       resources:
         requests:
@@ -65,3 +90,14 @@ spec:
   - port: 5432
     targetPort: 5432
   clusterIP: None  # Headless service for StatefulSet
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: chat-app-db-pdb
+  namespace: default
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: chat-app-db
